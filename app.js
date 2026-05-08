@@ -60,9 +60,7 @@ app.get("/median", function(req, res) {
             value: value
         });
     } catch(err) {
-        return res.status(400).json({
-            error: err.message
-        });
+        return next(err);
     }
 });
 
@@ -77,12 +75,30 @@ app.get("/mode", function(req, res) {
             value: value
         });
     } catch(err) {
-        return res.status(400).json({
-            error: err.message
-        });
+        return next(err);
     }
 });
 
+app.get("/all", function(req, res) {
+    try{
+        const nums = convertAndValidateNums(req.query.nums);
+
+        return res.json({
+            operation: "all",
+            mean: mean(nums),
+            median: median(nums),
+            mode: mode(nums)
+        });
+    } catch(err) {
+        return next(err);
+    }
+})
+
+app.use(function(err, req, res, next) {
+    return res.status(400).json({
+            error: err.message
+        });
+});
 
 
 module.exports = app;
